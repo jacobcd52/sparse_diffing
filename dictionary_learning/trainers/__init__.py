@@ -1,19 +1,11 @@
-from .standard import StandardTrainer
-from .gdm import GatedSAETrainer
-from .p_anneal import PAnnealTrainer
-from .gated_anneal import GatedAnnealTrainer
-from .top_k import TopKTrainer
-from .jumprelu import JumpReluTrainer
-from .batch_top_k import BatchTopKTrainer, BatchTopKSAE
-
+from trainers.standard import StandardTrainer
+from trainers.batch_top_k import BatchTopKTrainer, BatchTopKSAE
+from trainers.matryoshka_batch_top_k import MatryoshkaBatchTopKTrainer, MatryoshkaBatchTopKSAE
 
 __all__ = [
     "StandardTrainer",
-    "GatedSAETrainer",
-    "PAnnealTrainer",
-    "GatedAnnealTrainer",
-    "TopKTrainer",
-    "JumpReluTrainer",
+    "MatryoshkaBatchTopKTrainer",
+    "MatryoshkaBatchTopKSAE",
     "BatchTopKTrainer",
     "BatchTopKSAE",
 ]

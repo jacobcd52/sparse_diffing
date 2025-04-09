@@ -3,7 +3,7 @@ from nnsight import LanguageModel
 import gc
 from tqdm import tqdm
 
-from .config import DEBUG
+from config import DEBUG
 
 if DEBUG:
     tracer_kwargs = {'scan' : True, 'validate' : True}

@@ -5,10 +5,10 @@ import json
 import os
 from nnsight import LanguageModel
 
-from .trainers.top_k import AutoEncoderTopK
-from .trainers.batch_top_k import BatchTopKSAE
-from .trainers.matryoshka_batch_top_k import MatryoshkaBatchTopKSAE
-from .dictionary import (
+from trainers.top_k import AutoEncoderTopK
+from trainers.batch_top_k import BatchTopKSAE
+from trainers.matryoshka_batch_top_k import MatryoshkaBatchTopKSAE
+from dictionary import (
     AutoEncoder,
     GatedAutoEncoder,
     AutoEncoderNew,
@@ -98,3 +98,38 @@ def get_submodule(model: LanguageModel, layer: int):
         return model.model.layers[layer]
     else:
         raise ValueError(f"Please add submodule for model {model_name}")
+
+
+def load_iterable_dataset(
+        hf_name,
+        streaming=True,
+        load_dataset_args=[]
+        ):
+    dataset = load_dataset(
+        hf_name, 
+        split='train', 
+        streaming=streaming,
+        trust_remote_code=True,
+        *load_dataset_args
+        )
+    if streaming:
+        dataset = dataset.shuffle(buffer_size=10_000, seed=42)
+    else:
+        dataset = dataset.shuffle(seed=42)
+
+    class CustomData():
+        def __init__(self, dataset):
+            self.data = iter(dataset)
+
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            try:
+                return next(self.data)['text']
+            except StopIteration:
+                print("Resetting CustomData iterator")
+                self.data = iter(dataset)
+                return next(self.data)['text']
+
+    return  CustomData(dataset)
